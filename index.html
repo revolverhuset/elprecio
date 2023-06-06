@@ -28,6 +28,17 @@
               title: "NO5",
               width: element.clientWidth,
               height: element.clientWidth / 2,
+              scales: {
+                  y: {
+                      range: {
+                          min: {
+                              soft: 0,
+                              mode: 1,
+                          },
+                          max: {},
+                      }
+                  }
+              },
               axes: [
                   {
                       stroke: "#fff",
