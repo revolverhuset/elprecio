@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      html, body {
+          font-family: Monaco, Menlo, Consolas, "Courier New", monospace;
+          margin: 0 auto;
+          max-width: 1200px;
+          padding: 0;
+          background-color: #222;
+          color: #fff;
+          margin-top:1rem;
+      }
+    </style>
+    <link rel="stylesheet" href="uPlot.min.css"></link>
+  </head>
+  <body>
+    <div id="chart" style="margin-top: 1rem;"></div>
+    <script src="uPlot.iife.min.js"></script>
+    <script>
+      const render = (json) => {
+          const no5 = json.filter(s => s['omrade'] === 'NO5')[0].dager.reverse().map(d => d.priser).flat();
+          const transpose = (array) => array.reduce((r, a) => a.map((v, i) => [...(r[i] || []), v]), []);
+          const data = transpose(no5.map(s => ([+new Date(s.tidspunkt) / 1000, s.pris, s.pris * 1.25])));
+          const element = document.getElementById("chart");
+          const fmt = uPlot.fmtDate("{YYYY}-{MM}-{DD} {HH}:{mm}");
+          let opts = {
+              title: "NO5",
+              width: element.clientWidth,
+              height: element.clientWidth / 2,
+              axes: [
+                  {
+                      stroke: "#fff",
+                      values: [
+                          // tick incr          default           year                             month    day                        hour     min                sec       mode
+                          [3600 * 24 * 365,   "{YYYY}",         null,                            null,    null,                      null,    null,              null,        1],
+                          [3600 * 24 * 28,    "{MMM}",          "\n{YYYY}",                      null,    null,                      null,    null,              null,        1],
+                          [3600 * 24,         "{M}/{D}",        "\n{YYYY}",                      null,    null,                      null,    null,              null,        1],
+                          [3600,              "{HH}:{mm}",      "\n{M}/{D}/{YY}",                null,    "\n{M}/{D}",               null,    null,              null,        1],
+                          [60,                "{HH}:{mm}",      "\n{M}/{D}/{YY}",                null,    "\n{M}/{D}",               null,    null,              null,        1],
+                          [1,                 ":{ss}",          "\n{M}/{D}/{YY} {HH}:{mm}",      null,    "\n{M}/{D} {HH}:{mm}",     null,    "\n{HH}:{mm}",     null,        1],
+                          [0.001,             ":{ss}.{fff}",    "\n{M}/{D}/{YY} {HH}:{mm}",      null,    "\n{M}/{D} {HH}:{mm}",     null,    "\n{HH}:{mm}",     null,        1],
+                      ],
+                  },
+                  {
+                      stroke: "#fff",
+                  }
+              ],
+              series: [
+                  {
+                      value: (self, ts) => fmt(new Date(ts*1e3))
+                  },
+                  {
+                      show: true,
+                      spanGaps: false,
+                      label: "NOK/kwh eks. mva",
+                      stroke: "#445F94",
+                      width: 2,
+                      paths: uPlot.paths.stepped({ align: 1 }),
+                  },
+                  {
+                      show: true,
+                      spanGaps: false,
+                      label: "NOK/kwh inkl. mva",
+                      stroke: "#945F44",
+                      width: 2,
+                      paths: uPlot.paths.stepped({ align: 1 }),
+                  } 
+              ],
+          };
+
+          let uplot = new uPlot(opts, data, element);
+      };
+
+      fetch('rates.json').then(response => response.json()).then(data => render(data));
+    </script>
+  </body>
+</html>
+
