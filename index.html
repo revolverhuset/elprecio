@@ -18,6 +18,25 @@
     <div id="chart" style="margin-top: 1rem;"></div>
     <script src="uPlot.iife.min.js"></script>
     <script>
+      const nowPlugin = () => ({
+          hooks: {
+              draw: (u) => {
+                  const { ctx, bbox } = u;
+                  const now = (+new Date()) / 1000;
+                  const xPos = u.valToPos(now, 'x', true);
+                  ctx.save();
+                  ctx.beginPath();
+                  ctx.strokeStyle = '#ff69b4';
+                  ctx.lineWidth = 2;
+                  ctx.setLineDash([5, 15]);
+                  ctx.moveTo(xPos, bbox.top);
+                  ctx.lineTo(xPos, bbox.height+bbox.top);
+                  ctx.stroke();
+                  ctx.restore();
+              }
+          }
+      });
+
       const render = (json) => {
           const no5 = json.filter(s => s['omrade'] === 'NO5')[0].dager.reverse().map(d => d.priser).flat();
           const transpose = (array) => array.reduce((r, a) => a.map((v, i) => [...(r[i] || []), v]), []);
@@ -79,6 +98,9 @@
                       paths: uPlot.paths.stepped({ align: 1 }),
                       points: { show: false }
                   } 
+              ],
+              plugins: [
+                  nowPlugin()
               ],
           };
 
