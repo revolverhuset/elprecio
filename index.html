@@ -40,7 +40,7 @@
       const render = (json) => {
           const no5 = json.filter(s => s['omrade'] === 'NO5')[0].dager.reverse().map(d => d.priser).flat();
           const transpose = (array) => array.reduce((r, a) => a.map((v, i) => [...(r[i] || []), v]), []);
-          const data = transpose(no5.map(s => ([+new Date(s.tidspunkt) / 1000, s.pris, s.pris * 1.25])));
+          const data = transpose(no5.map(s => ([+new Date(s.tidspunkt) / 1000, s.pris, Math.max(s.pris, s.pris * 1.25)])));
           const element = document.getElementById("chart");
           const fmt = uPlot.fmtDate("{YYYY}-{MM}-{DD} {HH}:{mm}");
           let opts = {
