@@ -40,7 +40,21 @@
       const render = (json) => {
           const no5 = json.filter(s => s['omrade'] === 'NO5')[0].dager.reverse().map(d => d.priser).flat();
           const transpose = (array) => array.reduce((r, a) => a.map((v, i) => [...(r[i] || []), v]), []);
-          const data = transpose(no5.map(s => ([+new Date(s.tidspunkt) / 1000, s.pris, Math.max(s.pris, s.pris * 1.25)])));
+          const data = transpose(no5.map(s => ([
+                  +new Date(s.tidspunkt) / 1000,
+                  s.pris,
+                  Math.max(s.pris, s.pris * 1.25),
+                  // > Fra september 2023 baseres strømstøtten på gjennomsnittlig markedspris
+                  // > (elspotpris) time for time i det lokale prisområdet husholdningen tilhører. Når
+                  // > den overstiger 70 øre per kilowattime (kWh), vil staten betale 90 prosent av
+                  // > kraftprisen over dette nivået.
+                  // https://www.regjeringen.no/no/tema/energi/regjeringens-stromtiltak/
+                  //
+                  // > det skal tas hensyn til mva når man regner ut støttebeløpet. Dette er løst ved
+                  // > å legge til 25 % på støttesatsene"
+                  // https://www.nve.no/reguleringsmyndigheten/kunde/stroem/spoersmaal-og-svar-om-stroemstoette-for-hoeye-stroempriser/stroemstoette-for-husholdninger/
+                  Math.max(s.pris, s.pris * 1.25) - (s.pris > 70 ? (s.pris - 70) * 0.90 : 0) * 1.25,
+              ])));
           const element = document.getElementById("chart");
           const fmt = uPlot.fmtDate("{YYYY}-{MM}-{DD} {HH}:{mm}");
           let opts = {
@@ -90,14 +104,23 @@
                       points: { show: false }
                   },
                   {
-                      show: true,
+                      show: false,
                       spanGaps: false,
                       label: "øre/kwh inkl. mva",
                       stroke: "lime",
                       width: 1,
                       paths: uPlot.paths.stepped({ align: 1 }),
                       points: { show: false }
-                  } 
+                  },
+                  {
+                      show: true,
+                      spanGaps: false,
+                      label: "øre/kwh inkl. mva-strømstøtte",
+                      stroke: "orange",
+                      width: 1,
+                      paths: uPlot.paths.stepped({ align: 1 }),
+                      points: { show: false }
+                  },
               ],
               plugins: [
                   nowPlugin()
