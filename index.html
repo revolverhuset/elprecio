@@ -130,6 +130,9 @@
           };
 
           let uplot = new uPlot(opts, data, element);
+          setInterval(() => {
+              uplot.redraw();
+          }, 10000);
       };
 
       fetch('rates.json').then(response => response.json()).then(data => render(data));
