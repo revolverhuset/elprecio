@@ -55,11 +55,21 @@
           // https://www.nve.no/reguleringsmyndigheten/kunde/stroem/spoersmaal-og-svar-om-stroemstoette-for-hoeye-stroempriser/stroemstoette-for-husholdninger/
           const prisInkStøtte = prisInkMva - (s.pris > 70 ? (s.pris - 70) * 0.90 : 0) * 1.25;
 
+          // calculates "energiledd" using prices and times from
+          // https://www.bkk.no/alt-om-nettleie/nettleiepriser-for-privatkunder
+          const isDay = date.getHours() >= 6 && date.getHours() < 22;
+          const isWeekend = date.getDay() == 0 || date.getDay() == 6;
+          const energiledd = date.getMonth() < 3
+              ? (isDay && !isWeekend) ? 42.09 : 32.09
+              : (isDay && !isWeekend) ? 50.44 : 40.44;
+
           return [
               +date / 1000,
               s.pris,
               prisInkMva,
               prisInkStøtte,
+              energiledd,
+              prisInkStøtte + energiledd,
           ];
       }
 
@@ -125,10 +135,28 @@
                       points: { show: false }
                   },
                   {
-                      show: true,
+                      show: false,
                       spanGaps: false,
                       label: "øre/kwh inkl. mva-strømstøtte",
                       stroke: "orange",
+                      width: 1,
+                      paths: uPlot.paths.stepped({ align: 1 }),
+                      points: { show: false }
+                  },
+                  {
+                      show: false,
+                      spanGaps: false,
+                      label: "øre/kwh energiledd BKK",
+                      stroke: "papayawhip",
+                      width: 1,
+                      paths: uPlot.paths.stepped({ align: 1 }),
+                      points: { show: false }
+                  },
+                  {
+                      show: true,
+                      spanGaps: false,
+                      label: "øre/kwh spot, energiledd, mva",
+                      stroke: "tomato",
                       width: 1,
                       paths: uPlot.paths.stepped({ align: 1 }),
                       points: { show: false }
