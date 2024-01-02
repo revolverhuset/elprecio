@@ -46,14 +46,14 @@
 
           // > Fra september 2023 baseres strømstøtten på gjennomsnittlig markedspris
           // > (elspotpris) time for time i det lokale prisområdet husholdningen tilhører. Når
-          // > den overstiger 70 øre per kilowattime (kWh), vil staten betale 90 prosent av
+          // > den overstiger 73 øre per kilowattime (kWh), vil staten betale 90 prosent av
           // > kraftprisen over dette nivået.
           // https://www.regjeringen.no/no/tema/energi/regjeringens-stromtiltak/
           //
           // > det skal tas hensyn til mva når man regner ut støttebeløpet. Dette er løst ved
           // > å legge til 25 % på støttesatsene"
           // https://www.nve.no/reguleringsmyndigheten/kunde/stroem/spoersmaal-og-svar-om-stroemstoette-for-hoeye-stroempriser/stroemstoette-for-husholdninger/
-          const prisInkStøtte = prisInkMva - (s.pris > 70 ? (s.pris - 70) * 0.90 : 0) * 1.25;
+          const prisInkStøtte = prisInkMva - (s.pris > 73 ? (s.pris - 73) * 0.90 : 0) * 1.25;
 
           // calculates "energiledd" using prices and times from
           // https://www.bkk.no/alt-om-nettleie/nettleiepriser-for-privatkunder
