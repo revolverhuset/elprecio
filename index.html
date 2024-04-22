@@ -60,8 +60,8 @@
           const isDay = date.getHours() >= 6 && date.getHours() < 22;
           const isWeekend = date.getDay() == 0 || date.getDay() == 6;
           const energiledd = date.getMonth() < 3
-              ? (isDay && !isWeekend) ? 47.38 : 35.58
-              : (isDay && !isWeekend) ? 55.73 : 43.93;
+              ? (isDay && !isWeekend) ? 50.25 : 37.86
+              : (isDay && !isWeekend) ? 59.25 : 46.52;
 
           return [
               +date / 1000,
