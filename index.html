@@ -65,6 +65,8 @@
 
           return [
               +date / 1000,
+              50,
+              50 + energiledd,
               s.pris,
               prisInkMva,
               prisInkStøtte,
@@ -115,6 +117,24 @@
               series: [
                   {
                       value: (self, ts) => fmt(new Date(ts*1e3))
+                  },
+                  {
+                      show: false,
+                      spanGaps: false,
+                      label: "Norgespris inkl. mva",
+                      stroke: "plum",
+                      width: 1,
+                      paths: uPlot.paths.stepped({ align: 1 }),
+                      points: { show: false }
+                  },
+                  {
+                      show: true,
+                      spanGaps: false,
+                      label: "Norgespris, energiledd, mva",
+                      stroke: "red",
+                      width: 1,
+                      paths: uPlot.paths.stepped({ align: 1 }),
+                      points: { show: false }
                   },
                   {
                       show: false,
