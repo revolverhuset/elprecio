@@ -53,18 +53,20 @@
           // > det skal tas hensyn til mva når man regner ut støttebeløpet. Dette er løst ved
           // > å legge til 25 % på støttesatsene"
           // https://www.nve.no/reguleringsmyndigheten/kunde/stroem/spoersmaal-og-svar-om-stroemstoette-for-hoeye-stroempriser/stroemstoette-for-husholdninger/
-          const prisInkStøtte = prisInkMva - (s.pris > 73 ? (s.pris - 73) * 0.90 : 0) * 1.25;
+          const prisInkStøtte = prisInkMva - (s.pris > 75 ? (s.pris - 75) * 0.90 : 0) * 1.25;
 
           // calculates "energiledd" using prices and times from
           // https://www.bkk.no/alt-om-nettleie/nettleiepriser-for-privatkunder-pr-1-juli-2023
           const isDay = date.getHours() >= 6 && date.getHours() < 22;
           const isWeekend = date.getDay() == 0 || date.getDay() == 6;
           const energiledd = date.getMonth() < 3
-              ? (isDay && !isWeekend) ? 50.25 : 37.86
-              : (isDay && !isWeekend) ? 59.25 : 46.52;
+              ? (isDay && !isWeekend) ? 49.44 : 37.23
+              : (isDay && !isWeekend) ? 58.37 : 46.15;
 
           return [
               +date / 1000,
+              50,
+              50 + energiledd,
               s.pris,
               prisInkMva,
               prisInkStøtte,
@@ -115,6 +117,24 @@
               series: [
                   {
                       value: (self, ts) => fmt(new Date(ts*1e3))
+                  },
+                  {
+                      show: false,
+                      spanGaps: false,
+                      label: "Norgespris inkl. mva",
+                      stroke: "plum",
+                      width: 1,
+                      paths: uPlot.paths.stepped({ align: 1 }),
+                      points: { show: false }
+                  },
+                  {
+                      show: true,
+                      spanGaps: false,
+                      label: "Norgespris, energiledd, mva",
+                      stroke: "red",
+                      width: 1,
+                      paths: uPlot.paths.stepped({ align: 1 }),
+                      points: { show: false }
                   },
                   {
                       show: false,
